@@ -1,0 +1,18 @@
+.venv
+__pycache__
+Exports/
+Manual Files/
+Matrixify/
+PDs/
+Stage 2/
+Logs/
+Models/__pycache__
+FIleReaders/__pycache__
+__pycache__/
+PDs/
+Uploaded Files/
+build/
+dist
+*.spec
+config.json
+*.exe
