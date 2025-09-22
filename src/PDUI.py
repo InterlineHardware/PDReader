@@ -596,10 +596,3 @@ class CustomPopup(customtkinter.CTkToplevel):
         self.submit_callback(data)
         self.destroy()
 
-if __name__ == "__main__":
-
-    app = FileExplorerApp()
-    app.mainloop()
-
-    
-

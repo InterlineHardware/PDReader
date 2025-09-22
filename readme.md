@@ -1,9 +1,16 @@
 # PD Reader - Installation Guide
 
 ## 📦 Installation
-1. Download and run `pdreadersetup.exe`
-    -   Install to a location with read/write permissions
+1. Download and run `pdreadersetup.exe` from releases
 2. Launch from Start Menu > PD Reader
+
+## Usage
+
+# For Uploading Milwaukee Setup Files
+- Open PD Reader, go to the 3rd tab
+- Before import, make sure the setup file headers are correct. The first row should be header.
+- Drag and drop the setup file to the UI
+- Select File, Select File Type and hit Upload to Database.
 
 ## 📁 Output Folders
 The following folders are used:

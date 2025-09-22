@@ -347,7 +347,10 @@ def getSpecs(row, header_indices):
 
 def productInformationSheet(workbook, conn):
     logger.info("READING PRODUCT INFORMATION SHEET")
-    productInformationSheet = workbook["Product Information"]
+    try:
+        productInformationSheet = workbook["Product Information"]
+    except Exception:
+        productInformationSheet = workbook["Product Information "]
     # Create a dictionary to map header names to column indices
     header_indices = get_headers(productInformationSheet)
     queryModule = QueryModule(conn)
@@ -429,27 +432,37 @@ def specSheets(workbook : openpyxl.Workbook, conn):
         
         # Condition For New Spec Format
         if "SKU" in specheader_indices and "Field Name" in specheader_indices:
-            specDict = {}
-            MFG_Part_Number = specSheet.cell(row=2, column=1).value
-            
-            for row in specSheet.iter_rows(
-            min_row=2, max_row=specSheet.max_row, values_only=True
-            ):
-                specName = row[3]
-                specValue = row[4]
-                if specValue is None or specValue == "":
+            sku_col = specheader_indices["SKU"]
+            field_col = specheader_indices["Field Name"]
+            value_col = specheader_indices.get("Value", field_col + 1)  # assume value column is next to Field Name if not mapped
+
+            # Dictionary to collect specs per SKU
+            products = {}
+
+            for row in specSheet.iter_rows(min_row=2, max_row=specSheet.max_row, values_only=True):
+                sku = row[sku_col]
+                specName = row[field_col]
+                specValue = row[value_col]
+
+                if sku is None or specName is None or specValue in (None, ""):
                     continue
-                specDict[specName] = specValue
-                
-            specs = json.dumps(specDict)
-            productDetailsRecord= ProductDetailsRecord(modelno=MFG_Part_Number, specs=specs)
-            try:
-                processer.productInfoQuery(productDetailsRecord, queryModule)
-            except Exception as err:
-                logger.error(f"Funciton Error @SpecSheet:{sheet_name} : {err}")
-                print(
-                    "============================000000000000=============================  \n\n\n"
-                )
+
+                if sku not in products:
+                    products[sku] = {}
+
+                products[sku][specName] = specValue
+
+            # Now create ProductDetailsRecord for each SKU
+            for sku, specs_dict in products.items():
+                specs_json = json.dumps(specs_dict)
+                productDetailsRecord = ProductDetailsRecord(modelno=sku, specs=specs_json)
+
+                try:
+                    # print(sku, specs_dict)
+                    processer.productInfoQuery(productDetailsRecord, queryModule)
+                except Exception as err:
+                    logger.error(f"Function Error @SpecSheet:{sheet_name}, SKU:{sku} : {err}")
+                    print("============================000000000000=============================")
         
         
         else :
