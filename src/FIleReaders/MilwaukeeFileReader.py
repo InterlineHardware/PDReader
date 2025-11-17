@@ -10,6 +10,22 @@ from src.Models.ProductDetailsRecord import ProductDetailsRecord
 from src.Models.UOMRecord import UOMRecord
 import src.processer as processer
 
+HEADER_MAP = {
+    "MFG_Part_Number": [
+        "MFG Part # (OEM)",
+        "MFG Part #",
+        "Model Number",
+        "MFG Model Number",
+        "Part Number",
+        "SKU",
+        "Product SKU",
+        "Product Number"
+    ],
+    "GTIN": ["GTIN", "Global Trade Item Number", "UPC", "EAN"],
+    "Short_Description": ["Short Description", "Description Short", "Short Desc"],
+    "Product_Name": ["Product Name", "Name", "Item Name"],
+    "Search_Keywords": ["Search Keywords", "Keywords"],
+}
 
 logger = Logline.Logger(__name__).logger
 
@@ -31,13 +47,26 @@ def get_headers(sheet):
 
     return headers
 
+def find_header_index(headers: dict, canonical_name: str):
+    """Return the index of the first matching synonym for canonical header key."""
+    if canonical_name not in HEADER_MAP:
+        raise KeyError(f"No header mapping exists for: {canonical_name}")
+
+    synonyms = HEADER_MAP[canonical_name]
+
+    for s in synonyms:
+        if s in headers:
+            return headers[s]
+
+    return None
 
 # >> Reads Columns for Creating a Inventory Record
 
 
 def getInventory(row, header_indices):
     try:
-        MFG_Part_Number = row[header_indices["MFG Part # (OEM)"]]
+        idx = find_header_index(header_indices, "MFG_Part_Number")
+        MFG_Part_Number = row[idx] if idx is not None else None
         GTINCode = row[header_indices["GTIN"]]
         status_index = header_indices.get("Status", None)
         Status = (
@@ -108,7 +137,8 @@ def getInventory(row, header_indices):
 # >> Creates A Product Detals Record
 def getproductInfo(row, header_indices):
     try:
-        modelno = row[header_indices["MFG Part # (OEM)"]]
+        idx = find_header_index(header_indices, "MFG_Part_Number")
+        modelno = row[idx] if idx is not None else None
         search_keywords = row[header_indices["Search Keywords"]]
         product_name = row[header_indices["Product Name"]]
         description = row[header_indices["Marketing Copy"]]
@@ -201,7 +231,8 @@ def getproductInfo(row, header_indices):
 
 def getDigitalAssets(row, digitalassetsheader):
     try:
-        modelno = row[digitalassetsheader["MFG Part # (OEM)"]]
+        idx = find_header_index(digitalassetsheader, "MFG_Part_Number")
+        modelno = row[idx] if idx is not None else None
         video = row[digitalassetsheader["Product Review Video"]]
         safetyDataSheet = row[digitalassetsheader["Safety Data Sheet (SDS) - PDF"]]
 
@@ -238,7 +269,8 @@ def getDigitalAssets(row, digitalassetsheader):
 
 def getUOMs(row, header_indices):
     try:
-        mfg_part_no = row[header_indices["MFG Part # (OEM)"]]
+        idx = find_header_index(header_indices, "MFG_Part_Number")
+        mfg_part_no = row[idx] if idx is not None else None
         desc = row[header_indices["Short Description"]]
         uoms = []
         Eachupc = row[header_indices["UPC"]]
@@ -358,7 +390,8 @@ def productInformationSheet(workbook, conn):
     for row in productInformationSheet.iter_rows(
         min_row=2, max_row=productInformationSheet.max_row, values_only=True
     ):
-        MFG_Part_Number = row[header_indices["MFG Part # (OEM)"]]
+        idx = find_header_index(header_indices, "MFG_Part_Number")
+        MFG_Part_Number = row[idx] if idx is not None else None
         if MFG_Part_Number is None:
             continue
         try:
@@ -393,7 +426,8 @@ def digitalAssetsSheet(workbook, conn):
     for row in digitalAssetsSheet.iter_rows(
         min_row=2, max_row=digitalAssetsSheet.max_row, values_only=True
     ):
-        MFG_Part_Number = row[digitalAssetsHeaders_indices["MFG Part # (OEM)"]]
+        idx = find_header_index(digitalAssetsHeaders_indices, "MFG_Part_Number")
+        MFG_Part_Number = row[idx] if idx is not None else None
         if MFG_Part_Number is None:
             continue
         try:
