@@ -14,6 +14,7 @@ HEADER_MAP = {
     "MFG_Part_Number": [
         "MFG Part # (OEM)",
         "MFG Part #",
+        "MFG Part # ",
         "Model Number",
         "MFG Model Number",
         "Part Number",
@@ -282,6 +283,7 @@ def getUOMs(row, header_indices):
             package_quantity = row[header_indices["Net Package Quantity/Net Content"]]
         except Exception:
             package_quantity = 1
+        
         uom = "EA" if package_quantity == "1" or package_quantity == None else f"PK{package_quantity}"
 
         EachUOM = UOMRecord(
