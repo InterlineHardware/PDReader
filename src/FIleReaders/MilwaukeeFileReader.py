@@ -26,6 +26,7 @@ HEADER_MAP = {
     "Short_Description": ["Short Description", "Description Short", "Short Desc"],
     "Product_Name": ["Product Name", "Name", "Item Name"],
     "Search_Keywords": ["Search Keywords", "Keywords"],
+    "Assembled Depth (in)": ["Assembled Depth/Length (in)"]
 }
 
 logger = Logline.Logger(__name__).logger
@@ -161,9 +162,10 @@ def getproductInfo(row, header_indices):
         includes = json.dumps(includes_list)
 
         # Extract assembled dimensions and weight
+        assembled_depth_idx = find_header_index(header_indices, "Assembled Depth (in)")
         assembled_depth = (
-            f'{row[header_indices["Assembled Depth (in)"]]}"'
-            if header_indices.get("Assembled Depth (in)")
+            f'{row[assembled_depth_idx]}"'
+            if assembled_depth_idx
             else None
         )
         assembled_width = (
