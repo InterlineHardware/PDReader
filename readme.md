@@ -21,8 +21,8 @@ The following folders are used:
 
 ## Dev
 - Clone this repo
-- pip install -r requirements.txt
 - Activate venv
+- pip install -r requirements.txt
 - Run via `python -m src.main` or `./App.bat`
 - Build .exe file with `pyinstaller --clean -F -n PDReaderApp src/main.py`
-- Build installer setup by compiling "pdreaderinnosetup.iss"
+- Build installer setup by compiling "pdreaderinnosetup.iss" in Inno Setup
