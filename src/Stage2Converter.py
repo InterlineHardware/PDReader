@@ -124,8 +124,12 @@ def get_concatenated_attributes2(ws, row_num, start_attr_col, end_attr_col):
 
 
 def get_concatenated(ws, row_num, start_img_col, end_img_col, concatenator):
-    """Concatenate image filenames from specified columns."""
-    images = [ws.cell(row=row_num, column=col).value.strip() for col in range(col_to_num(start_img_col), col_to_num(end_img_col) + 1) if ws.cell(row=row_num, column=col).value]
+    """Concatenate cells together from different columns."""
+    images = [
+    str(ws.cell(row=row_num, column=col).value).strip()
+    for col in range(col_to_num(start_img_col), col_to_num(end_img_col) + 1)
+    if ws.cell(row=row_num, column=col).value is not None
+    ]
     return concatenator.join(images)
 
 
@@ -162,8 +166,7 @@ def getRichTextBulletListJSON(ws, row_num, start_inc_col, end_inc_col, output_co
     for col in range(col_to_num(start_inc_col), col_to_num(end_inc_col) + 1):
         cell_value = ws.cell(row=row_num, column=col).value
         if cell_value:  # Only consider non-empty cells
-            list.append(cell_value.strip())
-    
+            list.append(str(cell_value).strip())
     rich_text_bulleted_list = {
     "type": "root",
     "children": [
