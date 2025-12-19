@@ -91,7 +91,7 @@ class Matrixify:
                "Variant Metafield: custom.more_info_url", "Variant Metafield: custom.alternate_resource_1_name", "Variant Metafield: custom.alternate_resource_1_url", 
                "Variant Metafield: custom.manufacturer_model_number", "Metafield: description_tag", "Variant Metafield: mm-google-shopping.mpn",
                "Variant Metafield: dimensions.assembled_length", "Variant Metafield: dimensions.assembled_width", "Variant Metafield: dimensions.assembled_height",
-               "Variant Metafield: dimensions.assembled_depth", "Variant Metafield: dimensions.assembled_wieght", "Variant Metafield: dimensions.packaged_length",
+               "Variant Metafield: dimensions.assembled_depth", "Variant Metafield: dimensions.assembled_weight", "Variant Metafield: dimensions.packaged_length",
                "Variant Metafield: dimensions.packaged_width", "Variant Metafield: dimensions.packaged_height", "Variant Metafield: dimensions.volume", ]
     
     def ProductToRow(product: Product) -> MatrixifyRow: 
